@@ -6,6 +6,7 @@ export const useWebSocket = (url) => {
     const webSocketRef = useRef(null);
     const reconnectTimeoutRef = useRef(null);
     const mountedRef = useRef(false);
+    const reconnectAttemptsRef = useRef(0); // 재연결 시도 횟수
 
     useEffect(() => {
         mountedRef.current = true;
@@ -18,13 +19,14 @@ export const useWebSocket = (url) => {
             }
 
             try {
-                console.log('🔌 WebSocket 연결 시도:', url);
+                console.log(`🔌 WebSocket 연결 시도 #${reconnectAttemptsRef.current + 1}:`, url);
                 const ws = new WebSocket(url);
                 webSocketRef.current = ws;
 
                 ws.onopen = () => {
-                    console.log('✅ WebSocket 연결 성공');
+                    console.log('✅ WebSocket 연결 성공!');
                     setIsConnected(true);
+                    reconnectAttemptsRef.current = 0; // 연결 성공 시 카운터 리셋
 
                     // 재연결 타임아웃 클리어
                     if (reconnectTimeoutRef.current) {
@@ -54,11 +56,17 @@ export const useWebSocket = (url) => {
 
                     // 컴포넌트가 마운트되어 있을 때만 재연결
                     if (mountedRef.current && !reconnectTimeoutRef.current) {
+                        reconnectAttemptsRef.current += 1;
+
+                        // 지수 백오프: 1초, 2초, 4초, 8초... (최대 30초)
+                        const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current - 1), 30000);
+
+                        console.log(`🔄 ${delay / 1000}초 후 재연결 시도...`);
+
                         reconnectTimeoutRef.current = setTimeout(() => {
                             reconnectTimeoutRef.current = null;
-                            console.log('🔄 재연결 시도...');
                             connect();
-                        }, 3000);
+                        }, delay);
                     }
                 };
 
@@ -68,17 +76,19 @@ export const useWebSocket = (url) => {
 
                 // 재연결 시도
                 if (mountedRef.current && !reconnectTimeoutRef.current) {
+                    reconnectAttemptsRef.current += 1;
+                    const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current - 1), 30000);
+
                     reconnectTimeoutRef.current = setTimeout(() => {
                         reconnectTimeoutRef.current = null;
-                        console.log('🔄 재연결 시도...');
                         connect();
-                    }, 3000);
+                    }, delay);
                 }
             }
         };
 
-        // 첫 연결
-        connect();
+        // 첫 연결 (약간의 지연 추가)
+        setTimeout(connect, 100);
 
         // 클린업
         return () => {
@@ -94,7 +104,7 @@ export const useWebSocket = (url) => {
                 webSocketRef.current = null;
             }
         };
-    }, [url]); // url만 의존성
+    }, [url]);
 
     const sendMessage = useCallback((message) => {
         if (webSocketRef.current?.readyState === WebSocket.OPEN) {

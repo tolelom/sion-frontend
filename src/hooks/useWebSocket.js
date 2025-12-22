@@ -9,7 +9,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-const useWebSocket = (serverUrl = 'ws://localhost:3000/websocket/web') => {
+const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
   const [connected, setConnected] = useState(false);
   const [agvStatuses, setAgvStatuses] = useState({});
   const [error, setError] = useState(null);

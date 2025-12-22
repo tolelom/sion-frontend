@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import useWebSocket from './hooks/useWebSocket';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
 import AGVDashboard from './components/AGVDashboard';
@@ -89,27 +88,9 @@ function App() {
     }
   }, [lastMessage]);
 
+  // AGVDashboard를 기본으로 표시
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* AGV Dashboard */}
-        <Route path="/" element={<AGVDashboard />} />
-        <Route path="/dashboard" element={<AGVDashboard />} />
-
-        {/* Original Dashboard */}
-        <Route
-          path="/legacy"
-          element={
-            <Dashboard
-              agvData={agvData}
-              mapData={mapData}
-              isConnected={isConnected}
-              onSendCommand={sendMessage}
-            />
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <AGVDashboard />
   );
 }
 

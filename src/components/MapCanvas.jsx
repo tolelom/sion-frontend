@@ -1,18 +1,18 @@
 /**
- * Canvas 맵 - AGV 위치 렌더링
+ * Canvas 맥 - AGV 위치 렌더링
  */
 
 import React, { useRef, useEffect, useState } from 'react';
 
-const MapCanvas = ({ agvStatuses, selectedAGV, onMapClick }) => {
+const MapCanvas = ({ agvList, selectedAGV, onMapClick }) => {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 600, height: 400 });
 
   const CELL_SIZE = 20; // 픽셀
-  const MAP_WIDTH = 30;  // 셀
-  const MAP_HEIGHT = 20; // 셀
+  const MAP_WIDTH = 30;  // 셌
+  const MAP_HEIGHT = 20; // 셌
 
-  // 월드 좌표 → 캔버스 좌표 변환
+  // 월드 좌표 → 캠른버스 좌표 변환
   const worldToCanvas = (x, y) => {
     return {
       canvasX: x * CELL_SIZE,
@@ -20,7 +20,7 @@ const MapCanvas = ({ agvStatuses, selectedAGV, onMapClick }) => {
     };
   };
 
-  // 캔버스 좌표 → 월드 좌표 변환
+  // 캠른버스 좌표 → 월드 좌표 변환
   const canvasToWorld = (canvasX, canvasY) => {
     return {
       x: Math.round(canvasX / CELL_SIZE),
@@ -28,7 +28,7 @@ const MapCanvas = ({ agvStatuses, selectedAGV, onMapClick }) => {
     };
   };
 
-  // 캔버스 그리기
+  // 캠른버스 그리기
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -62,53 +62,59 @@ const MapCanvas = ({ agvStatuses, selectedAGV, onMapClick }) => {
     ctx.lineWidth = 2;
     ctx.strokeRect(0, 0, width, height);
 
-    // AGV 그리기
-    Object.entries(agvStatuses).forEach(([id, status]) => {
-      if (!status.position) return;
+    // ★ AGV 그리기 - agvList 배열 반복
+    if (Array.isArray(agvList)) {
+      agvList.forEach((agv) => {
+        if (!agv.position) {
+          console.warn('[MapCanvas] AGV has no position:', agv.id || agv.agent_id);
+          return;
+        }
 
-      const { canvasX, canvasY } = worldToCanvas(
-        status.position.x,
-        status.position.y
-      );
+        const agvId = agv.id || agv.agent_id;
+        const { canvasX, canvasY } = worldToCanvas(
+          agv.position.x,
+          agv.position.y
+        );
 
-      const isSelected = selectedAGV === id;
-      const radius = 8;
+        const isSelected = selectedAGV === agvId;
+        const radius = 8;
 
-      // 배경 원
-      ctx.fillStyle = isSelected ? '#2563eb' : '#06b6d4';
-      ctx.beginPath();
-      ctx.arc(canvasX, canvasY, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 선택 표시
-      if (isSelected) {
-        ctx.strokeStyle = '#1e40af';
-        ctx.lineWidth = 3;
+        // 배경 원
+        ctx.fillStyle = isSelected ? '#2563eb' : '#06b6d4';
         ctx.beginPath();
-        ctx.arc(canvasX, canvasY, radius + 5, 0, Math.PI * 2);
+        ctx.arc(canvasX, canvasY, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 선택 표시
+        if (isSelected) {
+          ctx.strokeStyle = '#1e40af';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(canvasX, canvasY, radius + 5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // 방향 표시
+        const angle = (agv.position.angle || 0) * (Math.PI / 180);
+        const arrowLength = 12;
+        const arrowX = canvasX + Math.cos(angle) * arrowLength;
+        const arrowY = canvasY + Math.sin(angle) * arrowLength;
+
+        ctx.strokeStyle = isSelected ? '#1e40af' : '#0891b2';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(canvasX, canvasY);
+        ctx.lineTo(arrowX, arrowY);
         ctx.stroke();
-      }
 
-      // 방향 표시
-      const angle = (status.position.angle || 0) * (Math.PI / 180);
-      const arrowLength = 12;
-      const arrowX = canvasX + Math.cos(angle) * arrowLength;
-      const arrowY = canvasY + Math.sin(angle) * arrowLength;
-
-      ctx.strokeStyle = isSelected ? '#1e40af' : '#0891b2';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(canvasX, canvasY);
-      ctx.lineTo(arrowX, arrowY);
-      ctx.stroke();
-
-      // ID 라벨
-      ctx.fillStyle = '#000';
-      ctx.font = '10px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(id, canvasX, canvasY + radius + 12);
-    });
-  }, [agvStatuses, selectedAGV]);
+        // ID 라벨
+        ctx.fillStyle = '#000';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(agvId, canvasX, canvasY + radius + 12);
+      });
+    }
+  }, [agvList, selectedAGV]);
 
   // 마우스 클릭
   const handleCanvasClick = (e) => {
@@ -131,7 +137,7 @@ const MapCanvas = ({ agvStatuses, selectedAGV, onMapClick }) => {
   return (
     <div className="map-canvas-container">
       <div className="map-info">
-        <h3>🗺️ Map</h3>
+        <h3>🗟a Map</h3>
         <p className="map-hint">Click to set goal</p>
       </div>
       <canvas

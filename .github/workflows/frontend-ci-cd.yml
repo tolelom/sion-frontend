@@ -25,10 +25,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
+
+      - name: npm 캐시 삭제 (손상된 파일 제거)
+        run: npm cache clean --force
 
       - name: 의존성 설치
-        run: npm ci
+        run: npm install
 
       - name: 프로덕션 빌드
         run: npm run build

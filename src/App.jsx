@@ -5,7 +5,7 @@ import AGVDashboard from './components/AGVDashboard';
 
 function App() {
   // Web Socket 연결
-  const WS_URL = 'ws://sion.tolelom.xyz:3000/websocket/web';
+  const WS_URL = 'ws://tolelom.xyz:3000/websocket/web';
   const { isConnected, lastMessage, sendMessage } = useWebSocket(WS_URL);
 
   // AGV 데이터 상태

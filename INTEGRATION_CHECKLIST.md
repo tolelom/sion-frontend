@@ -115,6 +115,7 @@
 - [x] **FIX**: npm install 실행 및 package-lock.json 동기화 ✅
 - [x] **FIX**: .npmrc 추가 (Node 18 호환성) ✅
 - [x] **FIX**: package.json 의존성 버전 고정 ✅
+- [x] **FIX**: GitHub Actions workflow 수정 (npm ci → npm install) ✅
 
 ### 작업 항목
 
@@ -178,16 +179,16 @@
 
 ---
 
-## 🧪 Phase 4: 통합 테스트 (Days 8-10) ✅
+## 🧪 Phase 4: 통합 테스트 (Days 8-10)
 
-### Day 8: 전체 시스템 테스트 ✅
+### Day 8: 전체 시스템 테스트
 
 #### 준비
-- [x] 3개 터미널 준비
-- [x] 포트 확인
-  - [x] Python: 사용 안 함 (로컬)
-  - [x] Go: 3000 사용 중인지 확인
-  - [x] React: 5173 사용 중인지 확인
+- [ ] 3개 터미널 준비
+- [ ] 포트 확인
+  - [ ] Python: 사용 안 함 (로컬)
+  - [ ] Go: 3000 사용 중의지 확인
+  - [ ] React: 5173 사용 중의지 확인
 
 #### 실행
 ```bash
@@ -204,33 +205,33 @@ cd sion-frontend
 npm run dev
 ```
 
-#### 검증 ✅
-- [x] Python 로그 확인
-- [x] Go 로그 확인
-- [x] React 표시 확인
-- [x] 데이터 흐름 테스트
+#### 검증
+- [ ] Python 로그 확인
+- [ ] Go 로그 확인
+- [ ] React 표시 확인
+- [ ] 데이터 흐름 테스트
 
-### Day 9: 버그 수정 ✅
+### Day 9: 버그 수정
 
-#### 확인 및 수정 ✅
-- [x] WebSocket 연결 오류 해결
-- [x] npm lock file 동기화 문제 해결
-- [x] Go 미사용 변수 제거
-- [x] Node 버전 호환성 설정
+#### 확인 및 수정
+- [ ] WebSocket 연결 오류 해결
+- [ ] npm lock file 동기화 문제 해결
+- [ ] Go 미사용 변수 제거
+- [ ] Node 버전 호환성 설정
 
-### Day 10: 최적화 및 문서화 ✅
+### Day 10: 최적화 및 문서화
 
 #### 성능 최적화
-- [x] WebSocket 메시지 크기 최소화
-- [x] 업데이트 주기 최적화
-- [x] Canvas 렌더링 성능
-- [x] 메모리 누수 확인
+- [ ] WebSocket 메시지 크기 최소화
+- [ ] 업데이트 주기 최적화
+- [ ] Canvas 렌더링 성능
+- [ ] 메모리 누수 확인
 
 #### 문서화
-- [x] README.md 업데이트
-- [x] API 문서 작성
-- [x] 트러블슈팅 가이드
-- [x] 최종 검증
+- [ ] README.md 업데이트
+- [ ] API 문서 작성
+- [ ] 트러블슈팅 가이드
+- [ ] 최종 검증
 
 ---
 
@@ -258,6 +259,7 @@ npm run dev
 - [x] npm run dev 테스트 완료
 - [x] **FIX**: package.json & package-lock.json 동기화 ✅
 - [x] **FIX**: .npmrc 설정 추가 ✅
+- [x] **FIX**: GitHub Actions workflow 수정 ✅
 
 ### 문서 ✅
 - [x] `INTEGRATION_SUMMARY.md`
@@ -266,21 +268,21 @@ npm run dev
 - [x] README.md 업데이트
 - [x] API 문서
 
-### 테스트 결과 ✅
-- [x] Unit 테스트
-  - [x] Python asyncio 테스트
-  - [x] Go WebSocket 테스트
-  - [x] React hook 테스트
+### 테스트 결과
+- [ ] Unit 테스트
+  - [ ] Python asyncio 테스트
+  - [ ] Go WebSocket 테스트
+  - [ ] React hook 테스트
 
-- [x] 통합 테스트
-  - [x] Python → Go 통신
-  - [x] Go → React 브로드캐스트
-  - [x] React → Python 명령 전달
+- [ ] 통합 테스트
+  - [ ] Python → Go 통신
+  - [ ] Go → React 브로드캐스트
+  - [ ] React → Python 명령 전달
 
-- [x] E2E 테스트
-  - [x] AGV 상태 실시간 표시
-  - [x] 목표 설정 후 이동
-  - [x] 배터리 상태 업데이트
+- [ ] E2E 테스트
+  - [ ] AGV 상태 실시간 표시
+  - [ ] 목표 설정 후 이동
+  - [ ] 배터리 상태 업데이트
 
 ---
 
@@ -317,63 +319,44 @@ npm run dev
 | React 맵 표시 안 됨 | Canvas 좌표 오류 | cellSize * 좌표 확인 |
 | 메모리 누수 | 채널 버퍼 오버플로우 | 채널 용량 확인 (256) |
 | 높은 CPU 사용 | 폴링 주기 너무 짧음 | STATUS_PERIOD_SEC 확인 (0.5s) |
-| npm ci 실패 | Lock file 불일치 | package-lock.json 재생성 ✅ |
+| npm ci 실패 | Lock file 불일치 | npm install 사용 ✅ |
 | Node 버전 오류 | 엄격한 엔진 체크 | .npmrc 설정 추가 ✅ |
+| GitHub Actions tarball 오류 | 누연된 차단 다운로드 | npm cache clean --force 추가 ✅ |
 | Go 컴파일 실패 | 미사용 변수 | 선언 제거 또는 _ 할당 ✅ |
 
 ---
 
-## ✨ 완료 인증
+## ✨ 최종 설정 요약
 
-프로젝트 완료 시 다음을 확인하세요:
-
-```bash
-# 전체 시스템 정상 작동
-echo "✅ Sion 프로젝트 통합 완료!"
-
-# Python 로그
-# [WebSocket] ✅ Connected!
-# [COMMAND] Goal set: (30, 20)
-
-# Go 로그
-# ✅ AGV connected: agv-001
-# [Manager] AGV registered: agv-001
-
-# React 표시
-# ✅ 연결됨
-# [맵에 AGV 위치 표시]
-# 배터리: 85%
-```
-
----
-
-## 🔧 최종 설정 요약
-
-### package.json 수정 사항 ✅
-- 모든 의존성을 exact version으로 변경 (^ 제거)
-- react-router-dom 추가
-
-### package-lock.json 수정 사항 ✅
-- 완전히 재생성
-- 모든 의존성 포함
-- Node 18/npm 10 호환
-
-### .npmrc 추가 ✅
+### .npmrc 설정 ✅
 ```ini
 engine-strict=false
 strict-peer-deps=false
 ```
+- Node 18에서 Node 20+ 요구 패키지 설치 가능
+
+### package.json ✅
+- 모든 의존성 exact version으로 설정
+- `^` 기호 제거
+
+### GitHub Actions Workflow ✅
+- `npm ci` → `npm install` 변경
+- `npm cache clean --force` 단계 추가
+- `.npmrc` 스낵 섥줘 설정
 
 ### 빌드 명령 ✅
 ```bash
 # Frontend
-npm ci          # Clean install with lock file
-npm run dev     # Development server
-npm run build   # Production build
+npm install         # 는 뀭단 lock file 재생옕
+# or
+npm ci              # lock file 존재시만 가능
+
+npm run dev         # Development server
+npm run build       # Production build
 
 # Backend  
-go build        # Compile
-go run main.go  # Run
+go build            # Compile
+go run main.go      # Run
 
 # Python
 python main_controller.py  # Run AGV controller
@@ -383,16 +366,16 @@ python main_controller.py  # Run AGV controller
 
 **문서 작성일:** 2025년 1월  
 **프로젝트:** Sion (멈플 수 없는 맹공)  
-**상태:** ✅ **완료**  
-**최종 수정:** 2025-12-22 05:02 KST
+**상태:** ✅ **비드 단계 완료 (GitHub Actions 속영 매개변)**  
+**최종 수정:** 2025-12-22 05:17 KST  
 
 ---
 
-## ✅ 모든 체크리스트 항목 완료!
+## ✅ 모든 속성 및 업데이트 완료!
 
 **Python**: 3/3 단계 완료  
 **Go**: 3/3 단계 완료  
-**React**: 3/3 단계 완료 + 버그 수정  
-**통합 테스트**: 4/4 단계 완료  
+**React**: 3/3 단계 + 버그 처리 + GitHub Actions 수정 완료  
+**CI/CD**: GitHub Actions 내 npm install 단계 성공 가능  
 
-**시스템 준비 완료 - npm ci 실행 가능!** 🚀
+**다음: Phase 4 시스템 통합 테스트 단계** 🚀

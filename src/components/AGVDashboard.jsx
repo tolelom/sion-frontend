@@ -11,7 +11,7 @@ import '../styles/AGVDashboard.css';
 const AGVDashboard = () => {
   const {
     connected,
-    agvStatuses,
+    agvList,              // ← 변경: agvStatuses → agvList
     error,
     setAGVGoal,
     changeAGVMode,
@@ -21,8 +21,13 @@ const AGVDashboard = () => {
   const [selectedAGV, setSelectedAGV] = useState(null);
   const [selectedMode, setSelectedMode] = useState('auto');
 
-  const agvList = Object.entries(agvStatuses);
-  const currentAGV = selectedAGV ? agvStatuses[selectedAGV] : null;
+  // ★ 수정: agvList는 배열이므로, Map으로 변환할 필요 없음
+  const agvListMap = agvList.reduce((acc, agv) => {
+    acc[agv.id || agv.agent_id] = agv;
+    return acc;
+  }, {});
+  
+  const currentAGV = selectedAGV ? agvListMap[selectedAGV] : null;
 
   const handleMapClick = (x, y) => {
     if (!selectedAGV) {
@@ -74,25 +79,29 @@ const AGVDashboard = () => {
             {agvList.length === 0 ? (
               <p className="no-agv">No AGVs connected</p>
             ) : (
-              agvList.map(([id, status]) => (
-                <div
-                  key={id}
-                  className={`agv-item ${selectedAGV === id ? 'selected' : ''}`}
-                  onClick={() => setSelectedAGV(id)}
-                >
-                  <div className="agv-header">
-                    <h3>{id}</h3>
-                    <span className={`state-badge ${status.state}`}>
-                      {status.state || 'unknown'}
-                    </span>
+              agvList.map((agv) => {
+                const agvId = agv.id || agv.agent_id;
+                return (
+                  <div
+                    key={agvId}
+                    className={`agv-item ${selectedAGV === agvId ? 'selected' : ''}`}
+                    onClick={() => setSelectedAGV(agvId)}
+                  >
+                    <div className="agv-header">
+                      <h3>{agvId}</h3>
+                      <span className={`state-badge ${agv.state}`}>
+                        {agv.state || 'unknown'}
+                      </span>
+                    </div>
+                    <div className="agv-info">
+                      <p>🔋 Battery: {Math.round(agv.battery || 0)}%</p>
+                      <p>🚶 Speed: {(agv.speed || 0).toFixed(2)} m/s</p>
+                      <p>📍 Mode: {agv.mode || 'unknown'}</p>
+                      <p>📌 Pos: ({Number(agv.position?.x || 0).toFixed(1)}, {Number(agv.position?.y || 0).toFixed(1)})</p>
+                    </div>
                   </div>
-                  <div className="agv-info">
-                    <p>🔋 Battery: {Math.round(status.battery || 0)}%</p>
-                    <p>🚶 Speed: {(status.speed || 0).toFixed(2)} m/s</p>
-                    <p>📍 Mode: {status.mode || 'unknown'}</p>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </aside>
@@ -100,7 +109,7 @@ const AGVDashboard = () => {
         {/* Center - Map */}
         <main className="map-container">
           <MapCanvas
-            agvStatuses={agvStatuses}
+            agvList={agvList}             // ← 변경: agvStatuses → agvList
             selectedAGV={selectedAGV}
             onMapClick={handleMapClick}
           />

@@ -11,7 +11,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 
 const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
   const [connected, setConnected] = useState(false);
-  const [agvStatuses, setAgvStatuses] = useState({});
+  const [agvList, setAgvList] = useState([]);
   const [error, setError] = useState(null);
   const [messages, setMessages] = useState([]);
   
@@ -36,23 +36,35 @@ const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
       wsRef.current.onmessage = (event) => {
         try {
           const msg = JSON.parse(event.data);
-          console.log('[WebSocket] Message:', msg.type);
+          console.log('[WebSocket] Message received:', msg.type, msg.data);
 
-          // 상태 메시지 처리
+          // ★ 핵심: Go 백엔드에서 보내는 "agv_status_update" 메시지 처리
+          if (msg.type === 'agv_status_update') {
+            console.log('[WebSocket] AGV statuses update received:', msg.data.agvs);
+            if (msg.data && Array.isArray(msg.data.agvs)) {
+              setAgvList(msg.data.agvs);
+              console.log('[WebSocket] Updated AGV list:', msg.data.agvs.length, 'AGVs');
+            }
+          }
+
+          // 기존 status 메시지도 지원 (호환성)
           if (msg.type === 'status') {
             const { agent_id, data } = msg;
-            setAgvStatuses((prev) => ({
-              ...prev,
-              [agent_id]: {
-                ...data,
-                lastUpdate: new Date().toISOString(),
-              },
-            }));
+            setAgvList((prev) => {
+              const existing = prev.find(a => a.id === agent_id);
+              if (existing) {
+                return prev.map(a => a.id === agent_id ? { ...a, ...data } : a);
+              }
+              return [...prev, { id: agent_id, ...data }];
+            });
           }
 
           // 시스템 메시지
           if (msg.type === 'system_info') {
-            console.log('[WebSocket] System:', msg.data);
+            console.log('[WebSocket] System info:', msg.data);
+            if (msg.data.event === 'agv_registered') {
+              console.log('[WebSocket] AGV registered:', msg.data.agv_id);
+            }
           }
 
           // 메시지 히스토리
@@ -145,7 +157,7 @@ const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
 
   return {
     connected,
-    agvStatuses,
+    agvList,           // ← 이름 변경: agvStatuses → agvList
     error,
     messages,
     sendMessage,

@@ -1,0 +1,51 @@
+.commentary-panel {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--accent-secondary);
+  border-radius: 4px;
+  padding: 12px;
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: var(--glow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.commentary-item {
+  padding: 8px 10px;
+  border-left: 3px solid var(--accent-primary);
+  background: rgba(0, 153, 255, 0.05);
+  border-radius: 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  animation: slideIn 0.3s ease-out;
+}
+
+.commentary-item.user {
+  border-left-color: var(--accent-secondary);
+  background: rgba(0, 217, 255, 0.05);
+  color: var(--accent-secondary);
+}
+
+.commentary-item.ai {
+  border-left-color: var(--color-success);
+  background: rgba(51, 255, 153, 0.05);
+  color: var(--color-success);
+}
+
+.commentary-item.system {
+  border-left-color: var(--color-warning);
+  background: rgba(255, 170, 0, 0.05);
+  color: var(--color-warning);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

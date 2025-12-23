@@ -1,132 +1,203 @@
+/* ControlPanel Component Styles */
+
 .control-panel {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.panel-header {
-  border-bottom: 1px solid var(--accent-primary);
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-}
-
-.panel-header h3 {
-  margin: 0;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .control-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
+  flex: 1;
 }
 
+/* Status Info Section */
 .status-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .status-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  padding: 10px 12px;
+  background: rgba(0, 153, 255, 0.08);
+  border-left: 3px solid #0099ff;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.status-item:hover {
+  background: rgba(0, 153, 255, 0.12);
+  border-left-color: #00ffff;
 }
 
 .status-item .label {
-  color: var(--text-secondary);
-  flex: 1;
+  font-size: 11px;
+  color: #8899cc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 60px;
 }
 
 .status-item .value {
-  color: var(--accent-primary);
   font-weight: bold;
-  font-family: var(--font-mono);
+  color: #0099ff;
+  font-size: 13px;
+  text-align: right;
 }
 
+.status-item .value.state {
+  padding: 4px 8px;
+  background: rgba(0, 255, 153, 0.15);
+  border-radius: 3px;
+  color: #00ff99;
+}
+
+/* Battery Bar */
 .battery-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex: 1;
-  height: 16px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--text-tertiary);
-  border-radius: 2px;
+  margin: 0 10px;
+}
+
+.battery-bar-container {
+  flex: 1;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
   overflow: hidden;
-  position: relative;
+  border: 1px solid rgba(0, 153, 255, 0.3);
 }
 
 .battery-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-success), var(--color-warning));
-  transition: width 0.3s ease;
-}
-
-.battery-fill.danger {
-  background: var(--color-danger);
+  border-radius: 4px;
+  transition: all 0.5s ease;
+  background: linear-gradient(90deg, #00ff99, #0099ff);
+  box-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
 }
 
 .battery-fill.warning {
-  background: var(--color-warning);
+  background: linear-gradient(90deg, #ffaa00, #ff6600);
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
 }
 
-.battery-fill.success {
-  background: var(--color-success);
+.battery-fill.danger {
+  background: linear-gradient(90deg, #ff0055, #ff0099);
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+  animation: battery-alert 0.5s ease-in-out infinite;
 }
 
+@keyframes battery-alert {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.battery-percent {
+  min-width: 35px;
+  text-align: right;
+}
+
+/* Mode Selector */
 .mode-selector {
-  border-top: 1px solid var(--text-tertiary);
-  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 153, 255, 0.05);
+  border: 1px solid rgba(0, 153, 255, 0.2);
+  border-radius: 4px;
 }
 
 .mode-selector .label {
-  display: block;
-  margin-bottom: 8px;
   font-size: 11px;
+  color: #8899cc;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  letter-spacing: 1px;
 }
 
 .mode-buttons {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
 .mode-btn {
-  flex: 1;
-  padding: 6px 8px;
-  border: 1px solid var(--accent-primary);
-  background: transparent;
-  color: var(--text-secondary);
+  padding: 10px 12px;
+  background: rgba(0, 153, 255, 0.1);
+  border: 1px solid #0099ff;
+  border-radius: 4px;
+  color: #e0e8ff;
+  font-size: 12px;
+  font-weight: bold;
   cursor: pointer;
-  border-radius: 2px;
-  font-size: 11px;
-  font-weight: 600;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .mode-btn:hover {
-  border-color: var(--accent-secondary);
-  color: var(--accent-secondary);
+  background: rgba(0, 153, 255, 0.2);
+  border-color: #00ffff;
 }
 
 .mode-btn.active {
-  background: var(--accent-primary);
-  color: var(--bg-primary);
-  border-color: var(--accent-primary);
-  box-shadow: var(--glow-md);
+  background: linear-gradient(135deg, #0099ff, #00ffff);
+  color: white;
+  border-color: #00ffff;
+  box-shadow: 0 0 15px rgba(0, 153, 255, 0.6);
 }
 
+/* Command Buttons */
 .command-buttons {
   display: flex;
-  gap: 6px;
-  margin-top: 8px;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
 }
 
-.command-buttons .btn {
-  flex: 1;
-  padding: 8px;
-  font-size: 11px;
+.btn {
+  padding: 12px 15px;
+  background: linear-gradient(135deg, #0099ff, #0066cc);
+  border: 1px solid #00ffff;
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(0, 153, 255, 0.3);
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #00ccff, #0099ff);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff0055, #cc0044);
+  border-color: #ff0055;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #ff3366, #ff0055);
+  box-shadow: 0 0 20px rgba(255, 0, 85, 0.6);
 }

@@ -1,13 +1,13 @@
 /**
- * Canvas 맵 - AGV 위치, 맵 그리드, 장애물, 목표 렌더링
+ * Canvas 맵 - AGV 위치, 맵 그리드, 장애물, 목표, 경로 렌더링
  */
 
 import React, { useRef, useEffect, useState } from 'react';
 
-const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
+const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals, paths }) => {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 600, height: 400 });
-  const [hoveredGoal, setHoveredGoal] = useState(null);
+  const [hoveredWaypoint, setHoveredWaypoint] = useState(null);
 
   // 기본값 (맵 데이터가 없을 때)
   const DEFAULT_CELL_SIZE = 20;
@@ -20,6 +20,7 @@ const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
   const cellSize = mapData?.cell_size || 0.5; // 미터 단위
   const obstacles = mapData?.obstacles || [];
   const mapGoals = goals || mapData?.goals || [];
+  const agvPaths = paths || {}; // { agv_id: [waypoints] }
 
   // 픽셀 변환 스케일 (1미터 = 20픽셀)
   const PIXELS_PER_METER = 20;
@@ -38,6 +39,18 @@ const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
       x: canvasX / PIXELS_PER_METER,
       y: canvasY / PIXELS_PER_METER,
     };
+  };
+
+  // 경로 거리 계산
+  const calculatePathDistance = (waypoints) => {
+    if (!waypoints || waypoints.length < 2) return 0;
+    let distance = 0;
+    for (let i = 1; i < waypoints.length; i++) {
+      const dx = waypoints[i].x - waypoints[i - 1].x;
+      const dy = waypoints[i].y - waypoints[i - 1].y;
+      distance += Math.sqrt(dx * dx + dy * dy);
+    }
+    return distance;
   };
 
   // 캔버스 크기 업데이트
@@ -98,6 +111,66 @@ const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
       ctx.font = '10px monospace';
       ctx.textAlign = 'center';
       ctx.fillText(obstacle.id || 'obstacle', canvasX, canvasY + 4);
+    });
+
+    // 🛤️ 경로 렌더링 (AGV 아래에 그리기)
+    Object.entries(agvPaths).forEach(([agvId, waypoints]) => {
+      if (!waypoints || waypoints.length < 2) return;
+
+      const isSelected = selectedAGV === agvId;
+      const pathColor = isSelected ? '#3b82f6' : '#94a3b8'; // 파란색 / 회색
+      const pathWidth = isSelected ? 3 : 2;
+
+      // 경로 선 그리기
+      ctx.strokeStyle = pathColor;
+      ctx.lineWidth = pathWidth;
+      ctx.setLineDash([]);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+      const firstPoint = worldToCanvas(waypoints[0].x, waypoints[0].y);
+      ctx.moveTo(firstPoint.canvasX, firstPoint.canvasY);
+
+      for (let i = 1; i < waypoints.length; i++) {
+        const point = worldToCanvas(waypoints[i].x, waypoints[i].y);
+        ctx.lineTo(point.canvasX, point.canvasY);
+      }
+      ctx.stroke();
+
+      // 웨이포인트 마커 (선택된 AGV만)
+      if (isSelected) {
+        waypoints.forEach((wp, index) => {
+          const { canvasX, canvasY } = worldToCanvas(wp.x, wp.y);
+
+          // 웨이포인트 원
+          ctx.fillStyle = index === 0 ? '#22c55e' : index === waypoints.length - 1 ? '#ef4444' : '#3b82f6';
+          ctx.beginPath();
+          ctx.arc(canvasX, canvasY, 4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 테두리
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(canvasX, canvasY, 4, 0, Math.PI * 2);
+          ctx.stroke();
+        });
+
+        // 경로 통계 표시
+        const distance = calculatePathDistance(waypoints);
+        const midIndex = Math.floor(waypoints.length / 2);
+        const midPoint = worldToCanvas(waypoints[midIndex].x, waypoints[midIndex].y);
+
+        ctx.fillStyle = '#1e40af';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(
+          `${distance.toFixed(1)}m (${waypoints.length} pts)`,
+          midPoint.canvasX,
+          midPoint.canvasY - 10
+        );
+      }
     });
 
     // 🎯 목표 지점 렌더링
@@ -226,7 +299,7 @@ const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 2;
     ctx.strokeRect(0, 0, width, height);
-  }, [agvList, selectedAGV, obstacles, mapGoals, mapWidth, mapHeight]);
+  }, [agvList, selectedAGV, obstacles, mapGoals, agvPaths, mapWidth, mapHeight]);
 
   // 마우스 클릭 - 목표 설정
   const handleCanvasClick = (e) => {
@@ -248,6 +321,11 @@ const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
     }
   };
 
+  // 경로 통계 계산
+  const totalPaths = Object.keys(agvPaths).length;
+  const selectedPath = selectedAGV ? agvPaths[selectedAGV] : null;
+  const selectedPathDistance = selectedPath ? calculatePathDistance(selectedPath) : 0;
+
   return (
     <div className="map-canvas-container">
       <div className="map-info">
@@ -257,7 +335,16 @@ const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
           <span className="stat-item">🚧 {obstacles.length} obstacles</span>
           <span className="stat-item">🎯 {mapGoals.length} goals</span>
           <span className="stat-item">🤖 {agvList?.length || 0} AGVs</span>
+          {totalPaths > 0 && (
+            <span className="stat-item">🛤️ {totalPaths} paths</span>
+          )}
         </div>
+        {selectedPath && (
+          <div className="path-info">
+            <span className="path-stat">📍 Distance: {selectedPathDistance.toFixed(2)}m</span>
+            <span className="path-stat">🔵 Waypoints: {selectedPath.length}</span>
+          </div>
+        )}
         <p className="map-hint">💡 Click on map to set goal position</p>
       </div>
       <canvas
@@ -280,6 +367,10 @@ const MapCanvas = ({ agvList, selectedAGV, onMapClick, mapData, goals }) => {
         <div className="legend-item">
           <span className="legend-circle" style={{ backgroundColor: '#06b6d4' }}></span>
           <span>Other AGV</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-line" style={{ backgroundColor: '#3b82f6' }}></span>
+          <span>Planned Path</span>
         </div>
         <div className="legend-item">
           <span className="legend-circle" style={{ backgroundColor: '#ef4444', opacity: 0.5 }}></span>

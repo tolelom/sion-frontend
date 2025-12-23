@@ -1,0 +1,364 @@
+/* ⚔️ Sion Character Theme - League of Legends Mecha Zero ⚔️ */
+
+/* Sion Background Accent */
+.sion-themed {
+  position: relative;
+}
+
+/* Sion Header Logo with Glow */
+.header-logo {
+  position: relative;
+  display: inline-block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 
+    0 0 10px #0099ff,
+    0 0 20px #0099ff,
+    0 0 30px #0066cc;
+  letter-spacing: 3px;
+  animation: sion-glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes sion-glow-pulse {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px #0099ff,
+      0 0 20px #0099ff,
+      0 0 30px #0066cc;
+  }
+  50% {
+    text-shadow: 
+      0 0 20px #0099ff,
+      0 0 30px #0099ff,
+      0 0 40px #00ccff,
+      0 0 50px #00ff99;
+  }
+}
+
+/* Sion Accent Elements */
+.sion-accent {
+  position: relative;
+}
+
+.sion-accent::before {
+  content: '⚡';
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #00ff99;
+  opacity: 0.6;
+  animation: sion-float 3s ease-in-out infinite;
+}
+
+@keyframes sion-float {
+  0%, 100% {
+    transform: translateY(-50%);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-60%);
+    opacity: 0.8;
+  }
+}
+
+/* Sion Energy Orbs */
+.sion-energy-orb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #00ffff, #0099ff);
+  box-shadow: 
+    0 0 10px #0099ff,
+    0 0 20px #00ccff,
+    inset 0 0 5px rgba(255, 255, 255, 0.3);
+  animation: sion-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes sion-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 10px #0099ff,
+      0 0 20px #00ccff,
+      inset 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px #0099ff,
+      0 0 30px #00ccff,
+      0 0 40px #00ff99,
+      inset 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Sion Circuit Board Pattern */
+.circuit-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><defs><linearGradient id="circuit"><stop offset="0%" style="stop-color:%230099ff;stop-opacity:0.1" /><stop offset="100%" style="stop-color:%2300ffff;stop-opacity:0.05" /></linearGradient></defs><path d="M10 50 L40 50 M60 50 L90 50 M50 10 L50 40 M50 60 L50 90" stroke="url(%23circuit)" stroke-width="1" fill="none"/><circle cx="50" cy="50" r="3" fill="%230099ff" opacity="0.3"/></svg>');
+  background-size: 100px 100px;
+  background-repeat: repeat;
+  pointer-events: none;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+/* Sion Mechanical Parts */
+.sion-gear {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: 
+    conic-gradient(
+      from 45deg,
+      #0099ff 0deg 10deg,
+      transparent 10deg 80deg,
+      #0099ff 80deg 90deg,
+      transparent 90deg 170deg,
+      #0099ff 170deg 180deg,
+      transparent 180deg 260deg,
+      #0099ff 260deg 270deg,
+      transparent 270deg 350deg,
+      #0099ff 350deg 360deg
+    );
+  border-radius: 50%;
+  animation: sion-spin 4s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes sion-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sion Neon Lines */
+.sion-neon-line {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ff99, transparent);
+  box-shadow: 0 0 10px #00ff99;
+  animation: sion-neon-flow 3s ease-in-out infinite;
+}
+
+@keyframes sion-neon-flow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 20px #00ff99, 0 0 30px #0099ff;
+  }
+}
+
+/* Sion Icon Glow */
+.sion-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.sion-icon::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 1px solid #0099ff;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: sion-icon-glow 2s ease-in-out infinite;
+}
+
+@keyframes sion-icon-glow {
+  0%, 100% {
+    opacity: 0.3;
+    box-shadow: 0 0 5px rgba(0, 153, 255, 0.5);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 15px rgba(0, 255, 153, 0.8);
+  }
+}
+
+/* Sion Panel Border Glow */
+.sion-panel-border {
+  position: relative;
+  border: 2px solid #0099ff;
+  border-radius: 8px;
+  box-shadow: 
+    0 0 20px rgba(0, 153, 255, 0.3),
+    inset 0 0 20px rgba(0, 153, 255, 0.05);
+}
+
+.sion-panel-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffff, transparent);
+  opacity: 0.5;
+  animation: sion-border-scan 3s ease-in-out infinite;
+}
+
+@keyframes sion-border-scan {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: calc(100% - 2px);
+  }
+}
+
+/* Sion Status Light */
+.sion-status-light {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00ff99;
+  box-shadow: 
+    0 0 8px #00ff99,
+    0 0 16px #0099ff,
+    inset 0 0 3px rgba(255, 255, 255, 0.5);
+  animation: sion-status-blink 1s ease-in-out infinite;
+}
+
+.sion-status-light.inactive {
+  background: #663333;
+  box-shadow: 0 0 5px rgba(255, 0, 85, 0.5);
+}
+
+@keyframes sion-status-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Sion Loading Bar */
+.sion-loading-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 153, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 153, 255, 0.3);
+}
+
+.sion-loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0099ff, #00ffff);
+  border-radius: 2px;
+  animation: sion-load 2s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 153, 255, 0.6);
+}
+
+@keyframes sion-load {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Sion Scan Lines */
+.sion-scan-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 153, 0.03) 2px,
+    rgba(0, 255, 153, 0.03) 4px
+  );
+  pointer-events: none;
+  animation: sion-scan 8s linear infinite;
+}
+
+@keyframes sion-scan {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+/* Sion Matrix Rain Effect */
+.sion-matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 50px,
+      rgba(0, 255, 153, 0.01) 50px,
+      rgba(0, 255, 153, 0.01) 100px
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Sion Power Indicator */
+.sion-power-indicator {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.sion-power-level {
+  width: 4px;
+  height: 12px;
+  border-radius: 2px;
+  background: rgba(0, 153, 255, 0.2);
+  border: 1px solid rgba(0, 153, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.sion-power-level.active {
+  background: linear-gradient(180deg, #00ffff, #0099ff);
+  border-color: #00ff99;
+  box-shadow: 0 0 8px rgba(0, 255, 153, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-logo {
+    font-size: 18px;
+  }
+
+  .sion-accent::before {
+    font-size: 14px;
+    right: -18px;
+  }
+}
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+  .sion-glow-pulse {
+    filter: brightness(1.2);
+  }
+}

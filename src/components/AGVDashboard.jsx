@@ -11,9 +11,13 @@ import '../styles/AGVDashboard.css';
 const AGVDashboard = () => {
   const {
     connected,
-    agvList,              // ← 변경: agvStatuses → agvList
+    agvList,
+    mapData,
+    goals,
+    systemReady,
     error,
     setAGVGoal,
+    setMapGoal,
     changeAGVMode,
     stopAGV,
   } = useWebSocket();
@@ -21,7 +25,6 @@ const AGVDashboard = () => {
   const [selectedAGV, setSelectedAGV] = useState(null);
   const [selectedMode, setSelectedMode] = useState('auto');
 
-  // ★ 수정: agvList는 배열이므로, Map으로 변환할 필요 없음
   const agvListMap = agvList.reduce((acc, agv) => {
     acc[agv.id || agv.agent_id] = agv;
     return acc;
@@ -29,12 +32,15 @@ const AGVDashboard = () => {
   
   const currentAGV = selectedAGV ? agvListMap[selectedAGV] : null;
 
-  const handleMapClick = (x, y) => {
-    if (!selectedAGV) {
-      alert('Please select an AGV first');
-      return;
+  // 🎯 맵 클릭 - REST API로 목표 설정
+  const handleMapClick = async (x, y) => {
+    console.log(`[Dashboard] Setting goal at (${x.toFixed(2)}, ${y.toFixed(2)})`);
+    const success = await setMapGoal(x, y, 0.5);
+    if (success) {
+      console.log('[Dashboard] Goal set successfully');
+    } else {
+      console.error('[Dashboard] Failed to set goal');
     }
-    setAGVGoal(x, y, false);
   };
 
   const handleModeChange = (mode) => {
@@ -55,10 +61,20 @@ const AGVDashboard = () => {
       {/* Header */}
       <header className="dashboard-header">
         <h1>🤖 AGV Dashboard</h1>
-        <div className="status-indicator">
+        <div className="status-indicators">
           <span className={`indicator ${connected ? 'connected' : 'disconnected'}`}>
             {connected ? '✅ Connected' : '❌ Disconnected'}
           </span>
+          {systemReady && (
+            <span className="indicator system-ready">
+              ✅ System Ready
+            </span>
+          )}
+          {mapData && (
+            <span className="indicator map-loaded">
+              🗺️ Map: {mapData.width}m × {mapData.height}m
+            </span>
+          )}
         </div>
       </header>
 
@@ -109,9 +125,11 @@ const AGVDashboard = () => {
         {/* Center - Map */}
         <main className="map-container">
           <MapCanvas
-            agvList={agvList}             // ← 변경: agvStatuses → agvList
+            agvList={agvList}
             selectedAGV={selectedAGV}
             onMapClick={handleMapClick}
+            mapData={mapData}
+            goals={goals}
           />
         </main>
 

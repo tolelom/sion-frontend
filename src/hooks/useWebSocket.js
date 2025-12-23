@@ -5,6 +5,7 @@
  * - WebSocket 연결/재연결
  * - AGV 상태 수신
  * - 맵 데이터 수신
+ * - 경로 데이터 수신
  * - 목표 설정
  * - 명령 전송
  */
@@ -16,6 +17,7 @@ const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
   const [agvList, setAgvList] = useState([]);
   const [mapData, setMapData] = useState(null);
   const [goals, setGoals] = useState([]);
+  const [paths, setPaths] = useState({}); // { agv_id: [waypoints] }
   const [systemReady, setSystemReady] = useState(false);
   const [error, setError] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -61,6 +63,21 @@ const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
               cell_size: msg.data.cell_size,
               obstacles: msg.data.obstacles || [],
             });
+          }
+
+          // 🛤️ 경로 계획 완료
+          if (msg.type === 'path_planned') {
+            console.log('[WebSocket] Path planned:', msg.data);
+            const agvId = msg.data.agv_id || msg.agent_id;
+            const waypoints = msg.data.path || msg.data.waypoints || [];
+            
+            if (agvId && waypoints.length > 0) {
+              setPaths((prev) => ({
+                ...prev,
+                [agvId]: waypoints,
+              }));
+              console.log(`[WebSocket] Path updated for ${agvId}: ${waypoints.length} waypoints`);
+            }
           }
 
           // 🎯 목표 설정
@@ -114,6 +131,16 @@ const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
             console.log('[WebSocket] System info:', msg.data);
             if (msg.data.event === 'agv_registered') {
               console.log('[WebSocket] AGV registered:', msg.data.agv_id);
+            }
+            if (msg.data.event === 'agv_disconnected') {
+              const agvId = msg.data.agv_id;
+              console.log('[WebSocket] AGV disconnected:', agvId);
+              // 경로 삭제
+              setPaths((prev) => {
+                const updated = { ...prev };
+                delete updated[agvId];
+                return updated;
+              });
             }
           }
 
@@ -238,6 +265,7 @@ const useWebSocket = (serverUrl = 'ws://tolelom.xyz:3000/websocket/web') => {
     agvList,
     mapData,
     goals,
+    paths,
     systemReady,
     error,
     messages,

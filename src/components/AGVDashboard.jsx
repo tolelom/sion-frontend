@@ -14,6 +14,7 @@ const AGVDashboard = () => {
     agvList,
     mapData,
     goals,
+    paths,
     systemReady,
     error,
     setAGVGoal,
@@ -31,6 +32,7 @@ const AGVDashboard = () => {
   }, {});
   
   const currentAGV = selectedAGV ? agvListMap[selectedAGV] : null;
+  const pathCount = Object.keys(paths).length;
 
   // 🎯 맵 클릭 - REST API로 목표 설정
   const handleMapClick = async (x, y) => {
@@ -75,6 +77,11 @@ const AGVDashboard = () => {
               🗺️ Map: {mapData.width}m × {mapData.height}m
             </span>
           )}
+          {pathCount > 0 && (
+            <span className="indicator paths-active">
+              🛤️ {pathCount} Active Path{pathCount > 1 ? 's' : ''}
+            </span>
+          )}
         </div>
       </header>
 
@@ -97,6 +104,7 @@ const AGVDashboard = () => {
             ) : (
               agvList.map((agv) => {
                 const agvId = agv.id || agv.agent_id;
+                const hasPath = paths[agvId] && paths[agvId].length > 0;
                 return (
                   <div
                     key={agvId}
@@ -104,7 +112,10 @@ const AGVDashboard = () => {
                     onClick={() => setSelectedAGV(agvId)}
                   >
                     <div className="agv-header">
-                      <h3>{agvId}</h3>
+                      <h3>
+                        {agvId}
+                        {hasPath && <span className="path-indicator">🛤️</span>}
+                      </h3>
                       <span className={`state-badge ${agv.state}`}>
                         {agv.state || 'unknown'}
                       </span>
@@ -130,6 +141,7 @@ const AGVDashboard = () => {
             onMapClick={handleMapClick}
             mapData={mapData}
             goals={goals}
+            paths={paths}
           />
         </main>
 

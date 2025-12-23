@@ -1,119 +1,68 @@
-/**
- * Control Panel - AGV 제어 패널
- */
+import React, { useState } from 'react';
 
-import React from 'react';
-
-const ControlPanel = ({
-  agv,
-  agvId,
-  selectedMode,
-  onModeChange,
-  onStop,
-}) => {
-  const batteryLevel = agv?.battery || 0;
-  const batteryColor =
-    batteryLevel > 50 ? '#22c55e' : batteryLevel > 20 ? '#eab308' : '#ef4444';
-
-  const formatPosition = (pos) => {
-    if (!pos) return 'N/A';
-    return `(${pos.x?.toFixed(1)}, ${pos.y?.toFixed(1)})`;
-  };
-
-  const formatAngle = (angle) => {
-    if (angle === undefined || angle === null) return 'N/A';
-    return `${(angle * (180 / Math.PI)).toFixed(1)}°`;
-  };
+const ControlPanel = () => {
+  const [battery, setBattery] = useState(85);
+  const [mode, setMode] = useState('AUTO');
 
   return (
-    <div className="control-panel-container">
-      {/* AGV Info */}
-      <section className="control-section info-section">
-        <h3>📊 Status</h3>
-        <div className="info-grid">
-          <div className="info-item">
-            <label>ID</label>
-            <span className="info-value">{agvId}</span>
+    <div className="panel control-panel">
+      <div className="panel-header">
+        <h3>⚙️ 제어</h3>
+      </div>
+
+      <div className="control-content">
+        {/* Status Info */}
+        <div className="status-info">
+          <div className="status-item">
+            <div className="label">상태</div>
+            <div className="value state">활성</div>
           </div>
-          <div className="info-item">
-            <label>State</label>
-            <span className="info-value">{agv?.state || 'unknown'}</span>
-          </div>
-          <div className="info-item">
-            <label>Mode</label>
-            <span className="info-value">{agv?.mode || 'unknown'}</span>
-          </div>
-          <div className="info-item">
-            <label>Speed</label>
-            <span className="info-value">
-              {(agv?.speed || 0).toFixed(2)} m/s
-            </span>
+          <div className="status-item">
+            <div className="label">모드</div>
+            <div className="value state">{mode}</div>
           </div>
         </div>
-      </section>
 
-      {/* Position */}
-      <section className="control-section position-section">
-        <h3>📍 Position</h3>
-        <div className="info-grid">
-          <div className="info-item">
-            <label>Coordinate</label>
-            <span className="info-value">
-              {formatPosition(agv?.position)}
-            </span>
-          </div>
-          <div className="info-item">
-            <label>Angle</label>
-            <span className="info-value">
-              {formatAngle(agv?.position?.angle)}
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* Battery */}
-      <section className="control-section battery-section">
-        <h3>🔋 Battery</h3>
-        <div className="battery-container">
+        {/* Battery Bar */}
+        <div className="status-item">
+          <div className="label">배터리</div>
           <div className="battery-bar">
-            <div
-              className="battery-fill"
-              style={{
-                width: `${batteryLevel}%`,
-                backgroundColor: batteryColor,
-              }}
-            />
+            <div className="battery-bar-container">
+              <div 
+                className={`battery-fill ${battery < 30 ? 'danger' : battery < 50 ? 'warning' : ''}`}
+                style={{ width: `${battery}%` }}
+              ></div>
+            </div>
+            <div className="battery-percent">{battery}%</div>
           </div>
-          <span className="battery-text">{batteryLevel.toFixed(0)}%</span>
         </div>
-      </section>
 
-      {/* Mode Control */}
-      <section className="control-section mode-section">
-        <h3>⚙️ Mode</h3>
-        <div className="mode-buttons">
-          <button
-            className={`mode-btn ${selectedMode === 'auto' ? 'active' : ''}`}
-            onClick={() => onModeChange('auto')}
-          >
-            🤖 Auto
-          </button>
-          <button
-            className={`mode-btn ${selectedMode === 'manual' ? 'active' : ''}`}
-            onClick={() => onModeChange('manual')}
-          >
-            🎮 Manual
-          </button>
+        {/* Mode Selector */}
+        <div className="mode-selector">
+          <div className="label">작동 모드</div>
+          <div className="mode-buttons">
+            <button 
+              className={`mode-btn ${mode === 'AUTO' ? 'active' : ''}`}
+              onClick={() => setMode('AUTO')}
+            >
+              자동
+            </button>
+            <button 
+              className={`mode-btn ${mode === 'MANUAL' ? 'active' : ''}`}
+              onClick={() => setMode('MANUAL')}
+            >
+              수동
+            </button>
+          </div>
         </div>
-      </section>
 
-      {/* Actions */}
-      <section className="control-section action-section">
-        <h3>🎯 Actions</h3>
-        <button className="action-btn stop-btn" onClick={onStop}>
-          ⏹️ Stop
-        </button>
-      </section>
+        {/* Command Buttons */}
+        <div className="command-buttons">
+          <button className="btn btn-primary">🎯 타겟팅</button>
+          <button className="btn btn-success">✓ 실행</button>
+          <button className="btn btn-danger">⚠️ 긴급 정지</button>
+        </div>
+      </div>
     </div>
   );
 };
